@@ -52,15 +52,3 @@ case $menu in
 ;;
 
 esac #end of the switch
- 
-
-
-
-	#for host in {1..254};
-	#do
-		#for port in $(cat ports.txt)
-		#do
-			#hping3 -S $1.$host -c 1 --destport $port 2>/dev/null | grep  | cut -d 		#done
-	#done
-
-

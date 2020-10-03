@@ -1,12 +1,10 @@
 #!/bin/bash
 
-# ==========================================================================
-# CONSTANTS
-# ==========================================================================
 
 # Constant for the colors
 PINK='\033[1;35m'
 CYAN='\033[1;36m'
+
 
 # ==========================================================================
 # Menu
@@ -17,8 +15,8 @@ print_menu() {
 	printf "\n\n${CYAN}\t\t\t\t\tPort Fucker\n\n"
 	printf "\t\t\t(1)Scan for specific ports\n"
 	printf "\t\t\t(2)Scan for a range of ports\n"
-	printf "\t\t\t(3)Scan for specific ports on a IP range\n"
-	printf "\t\t\t(4)Scan for a range of ports on a IP range\n\n"
+	printf "\t\t\t(3)Scan for specific ports in a IP range\n"
+	printf "\t\t\t(4)Scan for a range of ports in a IP range\n\n"
 
 	printf "${PINK}=%.0s" {1..80} #print the pink line
 
@@ -63,5 +61,27 @@ case $menu in
 		done
 	fi
 ;;
+2)
+	printf "Ip address: "
+	read ip
+	printf "What is the range that you want to scan? (min max)\n"
+	printf "Example: 1 65535 \n"
+	read -ra portsArray 
+	printf "Scanning on $ip\n"
+	min_port=${portsArray[0]}
+	max_port=${portsArray[1]}
+
+	for port in $(seq $min_port $max_port)
+	do
+		openports=$(hping3 -S $ip -c 1 --destport $port 2>/dev/null | grep "flags=SA" | cut -d "=" -f 6 | cut -d " " -f 1);
+		if [ "$openports" != "" ]
+		then
+			printf "${PINK}Port: $openports is open\n"
+		fi
+	done
+;;
+
 
 esac #end of the switch
+ 
+

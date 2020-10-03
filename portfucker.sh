@@ -119,6 +119,32 @@ case $menu in
 			done
 		done
 	fi
+;;
+4)
+	printf "Ip address (192.168.0): "
+	read ip
+
+	printf "What is the range that you want to scan? (min max)\n"
+	printf "Example: 1 65535 \n"
+	read -ra portsArray 
+	min_port=${portsArray[0]}
+	max_port=${portsArray[1]}
+
+	for lastbyte in $(seq 1 255)
+	do
+		printf "Scanning on $ip\n"
+		printf "${CYAN}Scanning on $ip.$lastbyte\n"
+		for port in $(seq $min_port $max_port)
+		do
+			openports=$(hping3 -S $ip.$lastbyte -c 1 --destport $port 2>/dev/null | grep "flags=SA" | cut -d "=" -f 6 | cut -d " " -f 1);
+			if [ "$openports" != "" ]
+			then
+				printf "${PINK}Port: $openports is open\n"
+			fi
+		done
+	done
+	
+
 
 
 esac #end of the switch

@@ -132,7 +132,6 @@ case $menu in
 
 	for lastbyte in $(seq 1 255)
 	do
-		printf "Scanning on $ip\n"
 		printf "${CYAN}Scanning on $ip.$lastbyte\n"
 		for port in $(seq $min_port $max_port)
 		do

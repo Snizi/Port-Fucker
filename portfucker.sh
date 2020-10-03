@@ -80,6 +80,45 @@ case $menu in
 		fi
 	done
 ;;
+3)
+	printf "Ip address (192.168.0): "
+	read ip
+	printf "Load ports from ports.txt? [Y\N]:"
+	read menu
+
+	if [ $menu == "Y" ] || [ $menu == "y" ]
+	then
+		
+		for lastbyte in $(seq 1 255)
+		do
+			printf "${CYAN}Scanning on $ip.$lastbyte\n"
+			for port in $(cat ports.txt)
+        	do
+				openports=$(hping3 -S $ip.$lastbyte -c 1 --destport $port 2>/dev/null | grep "flags=SA" | cut -d "=" -f 6 | cut -d " " -f 1);
+				if [ "$openports" != "" ]
+				then
+					printf "${PINK}Port: $openports is open\n"
+				fi
+			done
+		done
+	
+	else
+						#Specific typed ports
+		printf "Type the ports that you want to scan (80, 443...1337): \n"
+		read -ra portsArray 
+		for lastbyte in $(seq 1 255)
+		do
+			printf "${CYAN}Scanning on $ip.$lastbyte\n"
+			for port in "${portsArray[@]}"
+			do
+				openports=$(hping3 -S $ip.$lastbyte -c 1 --destport $port 2>/dev/null | grep "flags=SA" | cut -d "=" -f 6 | cut -d " " -f 1);
+				if [ "$openports" != "" ]
+				then
+					printf "${PINK}Port: $openports is open\n"
+				fi
+			done
+		done
+	fi
 
 
 esac #end of the switch
